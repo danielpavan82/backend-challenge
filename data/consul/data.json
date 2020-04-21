@@ -1,0 +1,23 @@
+[
+  {
+    "key": "ztech/backend-challenge/",
+    "flags": 0,
+    "value": ""
+  },
+  {
+    "key": "ztech/backend-challenge/spring.profiles.active",
+    "flags": 0,
+    "value": "ZGV2"
+  },
+  {
+    "key": "ztech/backend-challenge/server.port",
+    "flags": 0,
+    "value": "ODA4MA=="
+  },
+  {
+    "key": "ztech/backend-challenge/partner.endpoint",
+    "flags": 0,
+    "value": "aHR0cDovL2xvY2FsaG9zdDo4MDgx"
+  }
+
+]

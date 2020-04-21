@@ -1,0 +1,80 @@
+version: '2'
+services:
+  backendchallenge:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: ztech/backend-challenge
+    ports:
+    - "8080:8080"
+    environment:
+    - CONSUL_HOST=consul-local
+    - CONSUL_PORT=8500
+    - VAULT_HOST=vault-local
+    - VAULT_SCHEME=http
+    - VAULT_SECURITY_TOKEN=myroot
+    - VAULT_PORT=8200
+    - ADDITIONAL_OPTS= -Dspring.profiles.active=local
+    - MONGODB_URI=mongo-local:27017
+    - MONGODB_DATABASE=movies
+    - MONGODB_AUTH_DATABASE=admin
+    links:
+    - consul-local
+    - vault-local
+    - mongo-local
+    depends_on:
+    - consul-local
+    - vault-local
+    - mongo-local
+  consul-local:
+    image: consul:1.1.0
+    ports:
+    - 8500:8500
+  consul-cli:
+    image: consul:1.1.0
+    ports:
+    - "8500"
+    environment:
+    - CONSUL_HTTP_ADDR=http://consul-local:8500
+    volumes:
+    - "./data/consul:/tmp/consul-seed"
+    command: consul kv import @/tmp/consul-seed/data.json
+    links:
+    - consul-local
+    depends_on:
+    - consul-local
+  vault-local:
+    image: vault:0.8.3
+    ports:
+    - 8200:8200
+    environment:
+    - VAULT_DEV_ROOT_TOKEN_ID=myroot
+    cap_add:
+    - IPC_LOCK
+  vault-cli:
+    image: vault:0.8.3
+    cap_add:
+    - IPC_LOCK
+    environment:
+    - VAULT_TOKEN=myroot
+    - VAULT_ADDR=http://vault-local:8200
+    command: vault write secret/backend-challenge mongodb.username=movies mongodb.password=movies2020
+    depends_on:
+    - vault-local
+    links:
+    - vault-local
+  mongo-local:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=movies
+      - MONGO_INITDB_ROOT_PASSWORD=movies2020
+      - MONGODB_DATABASE=movies
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.100.0/24
+          gateway: 172.20.100.1

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="APP_NAME" value="backend-challenge"/>
+    <property name="APP_BASE_PACKAGE" value="br.com.ztech.backendchallenge"/>
+
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n%wex"/>
+
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} – %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+    <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+    <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+    <logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
+    <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+    <logger name="org.crsh.plugin" level="WARN"/>
+    <logger name="org.crsh.ssh" level="WARN"/>
+    <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
+    <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+    <logger name="org.springframework.boot.actuate.autoconfigure.CrshAutoConfiguration" level="WARN"/>
+
+    <logger name="{APP_BASE_PACKAGE}" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <springProfile name="dev">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+        <springProfile name="local">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+        <springProfile name="docker">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+        <springProfile name="dev">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+        <springProfile name="docker">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+        <springProfile name="local">
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+    </root>
+
+</configuration>

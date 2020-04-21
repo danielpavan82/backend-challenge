@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: backend-challenge
+  cloud:
+    consul:
+      enabled: true
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
+      config:
+        enabled: true
+        prefix: ztech
+        default-context: backend-challenge
+    vault:
+      token: ${VAULT_SECURITY_TOKEN}
+      scheme: ${VAULT_SCHEME}
+      host: ${VAULT_HOST}
+      generic:
+        application-name: backend-challenge
+  data:
+    mongodb:
+      uri: mongodb://${mongodb.username}:${mongodb.password}@${MONGODB_URI}/${MONGODB_DATABASE}?authSource=${MONGODB_AUTH_DATABASE}
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css,image/jpeg
